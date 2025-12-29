@@ -279,7 +279,7 @@ NB_RESULT command_list(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZ
 
     LOG("command_list: start:%d, end:%d\r\n", num_tmp, num_end);
     do {
-        IF_ERROR_EXIT(memory_code_get(num_tmp, &buf, &size_tmp)) {
+        if(IS_SUCCESS(memory_code_get(num_tmp, &buf, &size_tmp))) {
             util_print_value(num_tmp);
             platform_print_ch(' ');
             for(i = 0; i < size_tmp; i++) {
@@ -289,6 +289,45 @@ NB_RESULT command_list(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZ
             platform_print_ch('\n');
         }
     } while(IS_SUCCESS(memory_code_next(&num_tmp)) && (num_end == -1 || num_tmp <= num_end));
+
+    return memory_code_next(num);
+}
+
+NB_RESULT command_del(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state)
+{
+    NB_LINE_NUM num_tmp = 0;
+    NB_LINE_NUM num_next = 0;
+    NB_LINE_NUM num_end = -1;
+    NB_I8 *buf = NULL;
+    NB_SIZE i = 0;
+    NB_SIZE size_tmp = 0;
+    NB_VALUE value = 0;
+    NB_RESULT ret = NB_RESULT_SUCCESS;
+
+    if(code[*pos] != NB_CODE_STR_TERMINATE) { /* 第1パラメータを取得 */
+        IF_ERROR_EXIT(calc(code, size, pos, &value));
+        num_tmp = value;
+        if(code[*pos] != NB_CODE_STR_TERMINATE) { /* 第2パラメータを取得 */
+            *pos = *pos + 1;
+            IF_ERROR_EXIT(calc(code, size, pos, &value));
+            num_end = value;
+        } else {
+            num_end = num_tmp;
+        }
+    } else {
+        num_tmp = 0;
+        IF_ERROR_EXIT(memory_code_next(&num_tmp));
+    }
+
+    LOG("command_del: start:%d, end:%d\r\n", num_tmp, num_end);
+    do {
+        if(IS_SUCCESS(memory_code_get(num_tmp, &buf, &size_tmp))) {
+            num_next = num_tmp;
+            ret = memory_code_next(&num_next);
+            (void)memory_code_delete(num_tmp);
+            num_tmp = num_next;
+        }
+    } while(IS_SUCCESS(ret) && (num_end == -1 || num_tmp <= num_end));
 
     return memory_code_next(num);
 }

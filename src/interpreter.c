@@ -21,6 +21,7 @@ CommandFuncList _command[] = {
     {"SAVE", command_save},
     {"RENUM", command_renum},
     {"LIST", command_list},
+    {"DEL", command_del},
     {"", NULL},
     {"", NULL},
     {"", NULL},

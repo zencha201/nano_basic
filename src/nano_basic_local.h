@@ -39,6 +39,7 @@ NB_RESULT command_load(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZ
 NB_RESULT command_save(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state);
 NB_RESULT command_renum(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state);
 NB_RESULT command_list(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state);
+NB_RESULT command_del(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state);
 
 #if 0 /* nano_nasic.hに移動 */
 NB_RESULT calc_get_variable_pos(const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_SIZE *index);
