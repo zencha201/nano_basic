@@ -377,6 +377,110 @@ static void test_command_renum()
     TEST_END();
 }
 
+static void test_command_del()
+{
+    TEST_BEGIN("command DEL test");
+
+    {
+        /* DEL 20 - 単一行削除 */
+        NB_I8 code1[] = "PRINT \"LINE10\"";
+        NB_I8 code2[] = "PRINT \"LINE20\"";
+        NB_I8 code3[] = "PRINT \"LINE30\"";
+        NB_I8 code_del[] = "DEL 20";
+        NB_LINE_NUM num = 0;
+        NB_SIZE pos = 4;  /* "DEL " の後 */
+        NB_STATE state = NB_STATE_REPL;
+        NB_I8 *buf = NULL;
+        NB_SIZE size = 0;
+        
+        memory_code_clear();
+        memory_code_set(10, code1, sizeof(code1) - 1);
+        memory_code_set(20, code2, sizeof(code2) - 1);
+        memory_code_set(30, code3, sizeof(code3) - 1);
+        
+        TEST(IS_SUCCESS(command_del(&num, code_del, sizeof(code_del), &pos, &state)));
+        
+        /* 20行目が削除され、10と30が残っている */
+        TEST(IS_SUCCESS(memory_code_get(10, &buf, &size)));
+        TEST(IS_ERROR(memory_code_get(20, &buf, &size)));
+        TEST(IS_SUCCESS(memory_code_get(30, &buf, &size)));
+    }
+    {
+        /* DEL 10 20 - 範囲削除 */
+        NB_I8 code1[] = "PRINT \"LINE10\"";
+        NB_I8 code2[] = "PRINT \"LINE20\"";
+        NB_I8 code3[] = "PRINT \"LINE30\"";
+        NB_I8 code4[] = "PRINT \"LINE40\"";
+        NB_I8 code_del[] = "DEL 20 30";
+        NB_LINE_NUM num = 0;
+        NB_SIZE pos = 4;  /* "DEL " の後 */
+        NB_STATE state = NB_STATE_REPL;
+        NB_I8 *buf = NULL;
+        NB_SIZE size = 0;
+        
+        memory_code_clear();
+        memory_code_set(10, code1, sizeof(code1) - 1);
+        memory_code_set(20, code2, sizeof(code2) - 1);
+        memory_code_set(30, code3, sizeof(code3) - 1);
+        memory_code_set(40, code4, sizeof(code4) - 1);
+        
+        TEST(IS_SUCCESS(command_del(&num, code_del, sizeof(code_del), &pos, &state)));
+        
+        /* 20と30が削除され、10と40が残っている */
+        TEST(IS_SUCCESS(memory_code_get(10, &buf, &size)));
+        TEST(IS_ERROR(memory_code_get(20, &buf, &size)));
+        TEST(IS_ERROR(memory_code_get(30, &buf, &size)));
+        TEST(IS_SUCCESS(memory_code_get(40, &buf, &size)));
+    }
+    {
+        /* DEL - パラメータなしで先頭行削除 */
+        NB_I8 code1[] = "PRINT \"LINE10\"";
+        NB_I8 code2[] = "PRINT \"LINE20\"";
+        NB_I8 code_del[] = "DEL";
+        NB_LINE_NUM num = 0;
+        NB_SIZE pos = 3;  /* "DEL" の後 */
+        NB_STATE state = NB_STATE_REPL;
+        NB_I8 *buf = NULL;
+        NB_SIZE size = 0;
+        
+        memory_code_clear();
+        memory_code_set(10, code1, sizeof(code1) - 1);
+        memory_code_set(20, code2, sizeof(code2) - 1);
+        
+        TEST(IS_SUCCESS(command_del(&num, code_del, sizeof(code_del), &pos, &state)));
+        
+        /* 先頭の10が削除され、20が残っている */
+        TEST(IS_ERROR(memory_code_get(10, &buf, &size)));
+        TEST(IS_SUCCESS(memory_code_get(20, &buf, &size)));
+    }
+    {
+        /* DEL 10 - 単一行を範囲として指定（開始と終了が同じ） */
+        NB_I8 code1[] = "PRINT \"LINE5\"";
+        NB_I8 code2[] = "PRINT \"LINE10\"";
+        NB_I8 code3[] = "PRINT \"LINE15\"";
+        NB_I8 code_del[] = "DEL 10 10";
+        NB_LINE_NUM num = 0;
+        NB_SIZE pos = 4;  /* "DEL " の後 */
+        NB_STATE state = NB_STATE_REPL;
+        NB_I8 *buf = NULL;
+        NB_SIZE size = 0;
+        
+        memory_code_clear();
+        memory_code_set(5, code1, sizeof(code1) - 1);
+        memory_code_set(10, code2, sizeof(code2) - 1);
+        memory_code_set(15, code3, sizeof(code3) - 1);
+        
+        TEST(IS_SUCCESS(command_del(&num, code_del, sizeof(code_del), &pos, &state)));
+        
+        /* 10行目のみが削除 */
+        TEST(IS_SUCCESS(memory_code_get(5, &buf, &size)));
+        TEST(IS_ERROR(memory_code_get(10, &buf, &size)));
+        TEST(IS_SUCCESS(memory_code_get(15, &buf, &size)));
+    }
+
+    TEST_END();
+}
+
 int main(int argc, char *argv[])
 {
     memory_init(memory, CODE_SIZE, VALUE_SIZE, STACK_SIZE);
@@ -393,6 +497,7 @@ int main(int argc, char *argv[])
     test_command_new();
     test_command_list();
     test_command_renum();
+    test_command_del();
     
     return 0;
 }
