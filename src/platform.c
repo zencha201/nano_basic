@@ -6,23 +6,23 @@ static FClose fclose_ptr = NULL;
 static FRead fread_ptr = NULL;
 static FWrite fwrite_ptr = NULL;
 
-void set_platform_print_ch(PrintCh func) {
+void nano_basic_set_platform_print_ch(PrintCh func) {
     print_ch_ptr = func;
 }
 
-void set_platform_fopen(FOpen func) {
+void nano_basic_set_platform_fopen(FOpen func) {
     fopen_ptr = func;
 }
 
-void set_platform_fclose(FClose func) {
+void nano_basic_set_platform_fclose(FClose func) {
     fclose_ptr = func;
 }
 
-void set_platform_fread(FRead func) {
+void nano_basic_set_platform_fread(FRead func) {
     fread_ptr = func;
 }
 
-void set_platform_fwrite(FWrite func) {
+void nano_basic_set_platform_fwrite(FWrite func) {
     fwrite_ptr = func;
 }
 
