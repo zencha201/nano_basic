@@ -86,7 +86,7 @@ T.B.D
 ## ビルド方法
 
 ```bash
-# 通常のビルド
+# 通常のビルド（リリースビルド）
 make
 
 # デバッグビルド
@@ -94,6 +94,9 @@ make BUILD=debug
 
 # リリースビルド
 make BUILD=release
+
+# ライブラリのみビルド
+make all
 
 # 実行
 make run
@@ -115,6 +118,15 @@ make test_calc        # 計算機能のテスト
 make test_command     # コマンド機能のテスト
 make test_interpreter # インタプリタのテスト
 ```
+
+## 静的解析
+
+```bash
+# cppcheckによる静的解析を実行
+make sa
+```
+
+静的解析は`cppcheck`を使用します。インストールされていない場合は自動的にインストールされます。解析結果は`static_analysis_report.txt`に出力されます。
 
 ## テストカバレッジ
 

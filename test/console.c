@@ -134,6 +134,11 @@ int main(int argc, char *argv[])
     NB_VALUE value = 0;
 
     nano_basic_init(memory, CODE_SIZE, VALUE_SIZE, STACK_SIZE);
+    nano_basic_set_platform_print_ch(platform_print_ch);
+    nano_basic_set_platform_fopen(platform_fopen);
+    nano_basic_set_platform_fclose(platform_fclose);
+    nano_basic_set_platform_fread(platform_fread);
+    nano_basic_set_platform_fwrite(platform_fwrite);
     nano_basic_add_command("IMP", command_import);
     nano_basic_add_command("EXP", command_export);
 

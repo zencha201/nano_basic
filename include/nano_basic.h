@@ -83,11 +83,16 @@ NB_RESULT memory_variable_get(NB_SIZE pos, NB_VALUE *value);
 NB_RESULT memory_variable_set(NB_SIZE pos, NB_VALUE value);
 
 /* プラットフォーム側で実装が必要な関数 */
-void platform_print_ch(NB_I8 ch);
-NB_VALUE platform_import(NB_VALUE num);
-NB_BOOL platform_fopen(const NB_I8 *name, NB_BOOL write_mode);
-void platform_fclose();
-NB_BOOL platform_fread(NB_I8 **buf, NB_SIZE *size);
-NB_BOOL platform_fwrite(NB_LINE_NUM num, NB_I8 *buf, NB_SIZE size);
+typedef void (*PrintCh)(NB_I8);
+typedef NB_BOOL (*FOpen)(const NB_I8*, NB_BOOL);
+typedef void (*FClose)(void);
+typedef NB_BOOL (*FRead)(NB_I8**, NB_SIZE*);
+typedef NB_BOOL (*FWrite)(NB_LINE_NUM, NB_I8*, NB_SIZE);
+
+void nano_basic_set_platform_print_ch(PrintCh func);
+void nano_basic_set_platform_fopen(FOpen func);
+void nano_basic_set_platform_fclose(FClose func);
+void nano_basic_set_platform_fread(FRead func);
+void nano_basic_set_platform_fwrite(FWrite func);
 
 #endif /* __NANO_BASIC_H__ */
