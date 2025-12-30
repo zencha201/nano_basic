@@ -69,9 +69,9 @@ endif
 OBJS = $(SRCS:%.c=%.o)
 TARGET_OBJS = $(TARGET_SRCS:%.c=%.o)
 
-all: $(TARGET)
+all: $(LIB)
 
-run: all
+run: all $(TARGET)
 	LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH ./$(TARGET)
 
 $(TARGET) : $(LIB) $(TARGET_OBJS)
