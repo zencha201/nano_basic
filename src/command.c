@@ -282,7 +282,7 @@ NB_RESULT command_list(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZ
         if(IS_SUCCESS(memory_code_get(num_tmp, &buf, &size_tmp))) {
             util_print_value(num_tmp);
             platform_print_ch(' ');
-            for(i = 0; i < size_tmp; i++) {
+            for(i = 0; i < size_tmp - 1 /* NULL終端を含まない */; i++) {
                 platform_print_ch(buf[i]);
             }
             platform_print_ch('\r');
