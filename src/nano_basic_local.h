@@ -65,6 +65,12 @@ void memory_stack_clear();
 NB_RESULT memory_stack_push(NB_LINE_NUM value);
 NB_RESULT memory_stack_pop(NB_LINE_NUM *value);
 
+void platform_print_ch(NB_I8 ch);
+NB_BOOL platform_fopen(const NB_I8 *name, NB_BOOL write_mode);
+void platform_fclose();
+NB_BOOL platform_fread(NB_I8 **buf, NB_SIZE *size);
+NB_BOOL platform_fwrite(NB_LINE_NUM num, NB_I8 *buf, NB_SIZE size);
+
 NB_BOOL util_strskipuntil(const NB_I8 *str, NB_SIZE *pos, NB_I8 ch, NB_SIZE size);
 NB_BOOL util_strcmp(const NB_I8 *str1, const NB_I8 *str2, NB_SIZE size);
 NB_SIZE util_strlen(const NB_I8 *str);
