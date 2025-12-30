@@ -1,28 +1,28 @@
 #include "nano_basic.h"
 
-static void (*print_ch_ptr)(NB_I8) = NULL;
-static NB_BOOL (*fopen_ptr)(const NB_I8*, NB_BOOL) = NULL;
-static void (*fclose_ptr)(void) = NULL;
-static NB_BOOL (*fread_ptr)(NB_I8**, NB_SIZE*) = NULL;
-static NB_BOOL (*fwrite_ptr)(NB_LINE_NUM, NB_I8*, NB_SIZE) = NULL;
+static PrintCh print_ch_ptr = NULL;
+static FOpen fopen_ptr = NULL;
+static FClose fclose_ptr = NULL;
+static FRead fread_ptr = NULL;
+static FWrite fwrite_ptr = NULL;
 
-void set_platform_print_ch(void (*func)(NB_I8)) {
+void set_platform_print_ch(PrintCh func) {
     print_ch_ptr = func;
 }
 
-void set_platform_fopen(NB_BOOL (*func)(const NB_I8*, NB_BOOL)) {
+void set_platform_fopen(FOpen func) {
     fopen_ptr = func;
 }
 
-void set_platform_fclose(void (*func)(void)) {
+void set_platform_fclose(FClose func) {
     fclose_ptr = func;
 }
 
-void set_platform_fread(NB_BOOL (*func)(NB_I8**, NB_SIZE*)) {
+void set_platform_fread(FRead func) {
     fread_ptr = func;
 }
 
-void set_platform_fwrite(NB_BOOL (*func)(NB_LINE_NUM, NB_I8*, NB_SIZE)) {
+void set_platform_fwrite(FWrite func) {
     fwrite_ptr = func;
 }
 
