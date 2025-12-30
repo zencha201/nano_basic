@@ -31,6 +31,7 @@ SRCS += src/command.c
 SRCS += src/debug.c
 SRCS += src/interpreter.c
 SRCS += src/memory.c
+SRCS += src/platform.c
 SRCS += src/util.c
 
 TARGET_SRCS = 
