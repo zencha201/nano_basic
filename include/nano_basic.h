@@ -79,6 +79,7 @@ void nano_basic_set_input_value(NB_VALUE value);
 /* コマンドを実装する場合に使用する関数 */
 NB_RESULT calc_get_variable_pos(const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_SIZE *index);
 NB_RESULT calc(const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_VALUE *value);
+NB_RESULT memory_code_next(NB_LINE_NUM *next_num);
 NB_RESULT memory_variable_get(NB_SIZE pos, NB_VALUE *value);
 NB_RESULT memory_variable_set(NB_SIZE pos, NB_VALUE value);
 
