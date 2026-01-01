@@ -52,7 +52,9 @@ void memory_code_clear();
 NB_RESULT memory_code_delete(NB_LINE_NUM num);
 NB_RESULT memory_code_get(NB_LINE_NUM num, NB_I8 **buf, NB_SIZE *size);
 NB_RESULT memory_code_set(NB_LINE_NUM num, NB_I8 *buf, NB_SIZE size);
+#if 0 /* nano_nasic.hに移動 */
 NB_RESULT memory_code_next(NB_LINE_NUM *next_num);
+#endif
 NB_RESULT memory_code_set_line_number(NB_LINE_NUM num, NB_LINE_NUM step);
 
 void memory_value_clear();
