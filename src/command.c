@@ -11,6 +11,7 @@ void command_init()
     _input_variable_index = INIT_VALUE_INDEX;
 }
 
+#ifdef __ENABLE_COMMAND_HELP__
 extern CommandFuncList _command[];
 
 NB_RESULT command_help(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state)
@@ -29,6 +30,7 @@ NB_RESULT command_help(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZ
     }
     return memory_code_next(num);
 }
+#endif /* __ENABLE_COMMAND_HELP__ */
 
 NB_RESULT command_rem(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state)
 {

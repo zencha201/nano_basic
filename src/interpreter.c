@@ -4,7 +4,9 @@ static NB_LINE_NUM _num = 0; /* プログラムカウンタ */
 static NB_SIZE _pos = 0; /* 実行中の位置 */
 
 CommandFuncList _command[] = {
+#ifdef __ENABLE_COMMAND_HELP__
     {"HELP", command_help},
+#endif /* __ENABLE_COMMAND_HELP__ */
     {"REM", command_rem},
     {"LET", command_let},
     {"PRINT", command_print},
