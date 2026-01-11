@@ -11,6 +11,8 @@ void command_init()
     _input_variable_index = INIT_VALUE_INDEX;
 }
 
+extern CommandFuncList _command[];
+
 NB_RESULT command_help(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state)
 {
     CommandFuncList *p = _command;
