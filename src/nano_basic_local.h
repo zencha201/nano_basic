@@ -20,7 +20,9 @@ NB_RESULT nano_basic_set_code(NB_I8 *buf, NB_SIZE size, NB_LINE_NUM *num, NB_SIZ
 
 void command_init();
 void command_set_input_value(NB_VALUE value);
+#ifdef __ENABLE_COMMAND_HELP__
 NB_RESULT command_help(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state);
+#endif /* __ENABLE_COMMAND_HELP__ */
 NB_RESULT command_rem(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state);
 NB_RESULT command_let(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state);
 NB_RESULT command_print(NB_LINE_NUM *num, const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_STATE *state);
