@@ -14,8 +14,6 @@ typedef struct {
     CommandFunc func;
 } CommandFuncList;
 
-extern CommandFuncList _command[];
-
 NB_RESULT nano_basic_set_code(NB_I8 *buf, NB_SIZE size, NB_LINE_NUM *num, NB_SIZE *pos);
 
 void command_init();
