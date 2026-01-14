@@ -16,13 +16,13 @@ LIB = libnanobasic.so
 
 LDLAGS = 
 CFLAGS = -I./include
+CFLAGS += -D__ENABLE_COMMAND_HELP__
 
 # デバッグモード設定
 ifeq ($(BUILD), debug)
 CFLAGS += -g0
 CFLAGS += -ggdb
 CFLAGS += -D__DEBUG__
-CFLAGS += -D__ENABLE_COMMAND_HELP__
 endif
 
 # ソース
