@@ -57,10 +57,8 @@ NB_RESULT util_atoi(const NB_I8 *str, NB_SIZE *pos, NB_SIZE size, NB_I16 *value)
 NB_SIZE util_strlen(const NB_I8 *str)
 {
     NB_SIZE i = 0;
-    for(i = 0 ; ; i++) {
-        if(str[i] == '\0') {
-            return i;
-        }
+    for(i = 0 ; str[i] != '\0' ; i++) {
+        ;
     }
     return i;
 }
