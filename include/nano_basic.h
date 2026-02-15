@@ -75,6 +75,7 @@ void nano_basic_init(NB_I8 *memory, NB_SIZE code_size, NB_SIZE value_size, NB_SI
 NB_BOOL nano_basic_add_command(const NB_I8 *name, CommandFunc func);
 NB_STATE nano_basic_proc(NB_STATE state, NB_I8 *buf, NB_SIZE size);
 void nano_basic_set_input_value(NB_VALUE value);
+NB_BOOL nano_basic_set(const NB_I8 *code, NB_I8 *work_buf, NB_SIZE work_buf_size);
 
 /* コマンドを実装する場合に使用する関数 */
 NB_RESULT calc_get_variable_pos(const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_SIZE *index);
