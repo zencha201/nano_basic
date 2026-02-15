@@ -67,6 +67,22 @@ NB_BOOL nano_basic_add_command(const NB_I8 *name, CommandFunc func)
     return NB_FALSE;
 }
 
+NB_BOOL nano_basic_set(const NB_I8 *code, NB_I8 *work_buf, NB_SIZE work_buf_size)
+{
+    NB_LINE_NUM num = 0;
+    NB_SIZE pos = 0;
+    NB_SIZE size = 0;
+
+    while(size + 1 < work_buf_size && code[size] != '\0') {
+        work_buf[size] = code[size];
+        size++;
+    }
+    work_buf[size] = '\0';
+    size++;
+
+    return IS_SUCCESS(nano_basic_set_code(work_buf, size, &num, &pos));
+}
+
 NB_RESULT nano_basic_set_code(NB_I8 *buf, NB_SIZE size, NB_LINE_NUM *num, NB_SIZE *pos)
 {
     NB_SIZE i = 0;

@@ -142,6 +142,9 @@ int main(int argc, char *argv[])
     nano_basic_add_command("IMP", command_import);
     nano_basic_add_command("EXP", command_export);
 
+    nano_basic_set("10 PRINT \"HELLO WORLD\"", buf, sizeof(buf));
+    nano_basic_set("20 END", buf, sizeof(buf));
+
     while(state != NB_STATE_END) {
         if(state == NB_STATE_REPL) {
             platform_print_ch('>');
