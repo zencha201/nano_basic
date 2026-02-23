@@ -16,7 +16,7 @@ static NB_SIZE _code_size = 0;
 static NB_SIZE _code_free_size = 0;
 #define _code_use_size ((NB_SIZE)(_code_size - _code_free_size))
 static NB_VALUE *_value = NULL;
-static NB_BOOL _value_size = 0;
+static NB_SIZE _value_size = 0;
 static NB_LINE_NUM *_stack = NULL;
 static NB_SIZE _stack_size = 0;
 static NB_SIZE _stack_top = 0;
