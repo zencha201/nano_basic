@@ -344,6 +344,123 @@ static void test_code_update_and_delete()
     TEST_END();
 }
 
+static void test_nano_basic_operators()
+{
+    TEST_BEGIN("nano_basic operators test");
+
+    {
+        /* 剰余演算子のテスト: 10 % 3 = 1 */
+        NB_I8 buf[] = "LET A 10%3";
+        NB_STATE state = NB_STATE_REPL;
+        NB_VALUE value = 0;
+        
+        memory_code_clear();
+        state = nano_basic_proc(state, buf, sizeof(buf));
+        
+        TEST(state == NB_STATE_REPL);
+        TEST(IS_SUCCESS(memory_variable_get(0, &value)));  /* A */
+        TEST(value == 1);
+    }
+    {
+        /* 不等号のテスト: 5 <> 3 = 1 (true) */
+        NB_I8 buf[] = "LET B 5<>3";
+        NB_STATE state = NB_STATE_REPL;
+        NB_VALUE value = 0;
+        
+        state = nano_basic_proc(state, buf, sizeof(buf));
+        
+        TEST(state == NB_STATE_REPL);
+        TEST(IS_SUCCESS(memory_variable_get(1, &value)));  /* B */
+        TEST(value == 1);
+    }
+    {
+        /* 以下のテスト: 5 <= 5 = 1 (true) */
+        NB_I8 buf[] = "LET C 5<=5";
+        NB_STATE state = NB_STATE_REPL;
+        NB_VALUE value = 0;
+        
+        state = nano_basic_proc(state, buf, sizeof(buf));
+        
+        TEST(state == NB_STATE_REPL);
+        TEST(IS_SUCCESS(memory_variable_get(2, &value)));  /* C */
+        TEST(value == 1);
+    }
+    {
+        /* 以上のテスト: 10 >= 5 = 1 (true) */
+        NB_I8 buf[] = "LET D 10>=5";
+        NB_STATE state = NB_STATE_REPL;
+        NB_VALUE value = 0;
+        
+        state = nano_basic_proc(state, buf, sizeof(buf));
+        
+        TEST(state == NB_STATE_REPL);
+        TEST(IS_SUCCESS(memory_variable_get(3, &value)));  /* D */
+        TEST(value == 1);
+    }
+    {
+        /* 論理AND: 1 && 1 = 1 (true) */
+        NB_I8 buf[] = "LET E 1&&1";
+        NB_STATE state = NB_STATE_REPL;
+        NB_VALUE value = 0;
+        
+        state = nano_basic_proc(state, buf, sizeof(buf));
+        
+        TEST(state == NB_STATE_REPL);
+        TEST(IS_SUCCESS(memory_variable_get(4, &value)));  /* E */
+        TEST(value == 1);
+    }
+    {
+        /* 論理OR: 0 || 1 = 1 (true) */
+        NB_I8 buf[] = "LET F 0||1";
+        NB_STATE state = NB_STATE_REPL;
+        NB_VALUE value = 0;
+        
+        state = nano_basic_proc(state, buf, sizeof(buf));
+        
+        TEST(state == NB_STATE_REPL);
+        TEST(IS_SUCCESS(memory_variable_get(5, &value)));  /* F */
+        TEST(value == 1);
+    }
+    {
+        /* ビットAND: 5 & 3 = 1 */
+        NB_I8 buf[] = "LET G 5&3";
+        NB_STATE state = NB_STATE_REPL;
+        NB_VALUE value = 0;
+        
+        state = nano_basic_proc(state, buf, sizeof(buf));
+        
+        TEST(state == NB_STATE_REPL);
+        TEST(IS_SUCCESS(memory_variable_get(6, &value)));  /* G */
+        TEST(value == 1);  /* 0b0101 & 0b0011 = 0b0001 = 1 */
+    }
+    {
+        /* ビットOR: 5 | 3 = 7 */
+        NB_I8 buf[] = "LET H 5|3";
+        NB_STATE state = NB_STATE_REPL;
+        NB_VALUE value = 0;
+        
+        state = nano_basic_proc(state, buf, sizeof(buf));
+        
+        TEST(state == NB_STATE_REPL);
+        TEST(IS_SUCCESS(memory_variable_get(7, &value)));  /* H */
+        TEST(value == 7);  /* 0b0101 | 0b0011 = 0b0111 = 7 */
+    }
+    {
+        /* 複合演算: (5>3) && (10<=20) = 1 */
+        NB_I8 buf[] = "LET I 5>3&&10<=20";
+        NB_STATE state = NB_STATE_REPL;
+        NB_VALUE value = 0;
+        
+        state = nano_basic_proc(state, buf, sizeof(buf));
+        
+        TEST(state == NB_STATE_REPL);
+        TEST(IS_SUCCESS(memory_variable_get(8, &value)));  /* I */
+        TEST(value == 1);  /* true && true = true */
+    }
+
+    TEST_END();
+}
+
 int main(int argc, char *argv[])
 {
     nano_basic_init(memory, CODE_SIZE, VALUE_SIZE, STACK_SIZE);
@@ -358,6 +475,7 @@ int main(int argc, char *argv[])
     test_nano_basic_proc_repl_mode();
     test_nano_basic_set_input_value();
     test_code_update_and_delete();
+    test_nano_basic_operators();
     
     return 0;
 }

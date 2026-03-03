@@ -2,7 +2,7 @@
 #include "test.h"
 
 #define CODE_SIZE (128)
-#define VALUE_SIZE (48)
+#define VALUE_SIZE (54)  /* A-Z(26) + @(1) = 27 variables * 2 bytes = 54 */
 #define STACK_SIZE (16)
 static NB_I8 memory[CODE_SIZE + VALUE_SIZE + STACK_SIZE];
 
@@ -261,14 +261,63 @@ static void test_calc_comparison()
         TEST(value == 1);  /* true */
     }
     {
-        NB_I8 code[] = "5!3";
+        NB_I8 code[] = "5=3";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 0);  /* false */
+    }
+    {
+        NB_I8 code[] = "5<>3";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* true (not equal) */
+    }
+    {
+        NB_I8 code[] = "5<>5";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 0);  /* false (equal) */
+    }
+    {
+        NB_I8 code[] = "5>=3";
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
         TEST(value == 1);  /* true */
     }
     {
-        NB_I8 code[] = "5!5";
+        NB_I8 code[] = "5>=5";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* true */
+    }
+    {
+        NB_I8 code[] = "5>=7";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 0);  /* false */
+    }
+    {
+        NB_I8 code[] = "3<=5";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* true */
+    }
+    {
+        NB_I8 code[] = "5<=5";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* true */
+    }
+    {
+        NB_I8 code[] = "7<=5";
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
@@ -279,7 +328,7 @@ static void test_calc_comparison()
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
-        TEST(value == 1);  /* (10>5)>2 = 1>2 = 0, or 10>(5>2) = 10>1 = 1 */
+        TEST(value == 0);  /* (10>5)>2 = 1>2 = 0 */
     }
 
     TEST_END();
@@ -289,49 +338,114 @@ static void test_calc_logical()
 {
     TEST_BEGIN("calc logical test");
 
+    /* 論理AND (&&) のテスト */
     {
-        NB_I8 code[] = "1&1";
+        NB_I8 code[] = "1&&1";
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
         TEST(value == 1);  /* true && true = true */
     }
     {
-        NB_I8 code[] = "1&0";
+        NB_I8 code[] = "1&&0";
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
         TEST(value == 0);  /* true && false = false */
     }
     {
-        NB_I8 code[] = "0&0";
+        NB_I8 code[] = "0&&0";
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
         TEST(value == 0);  /* false && false = false */
     }
     {
-        NB_I8 code[] = "1|0";
+        NB_I8 code[] = "5&&3";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* non-zero && non-zero = true */
+    }
+
+    /* 論理OR (||) のテスト */
+    {
+        NB_I8 code[] = "1||0";
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
         TEST(value == 1);  /* true || false = true */
     }
     {
-        NB_I8 code[] = "0|0";
+        NB_I8 code[] = "0||0";
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
         TEST(value == 0);  /* false || false = false */
     }
     {
-        NB_I8 code[] = "1|1&0";
+        NB_I8 code[] = "0||5";
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
-        /* (1|1)&0 = 1&0 = 0, or 1|(1&0) = 1|0 = 1 */
-        /* 演算子優先順位により 1|(1&0) = 1 */
-        LOG("result value: %d\r\n", value);
+        TEST(value == 1);  /* false || non-zero = true */
+    }
+
+    /* ビットAND (&) のテスト */
+    {
+        NB_I8 code[] = "5&3";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* 0b0101 & 0b0011 = 0b0001 = 1 */
+    }
+    {
+        NB_I8 code[] = "12&10";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 8);  /* 0b1100 & 0b1010 = 0b1000 = 8 */
+    }
+    {
+        NB_I8 code[] = "7&4";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 4);  /* 0b0111 & 0b0100 = 0b0100 = 4 */
+    }
+
+    /* ビットOR (|) のテスト */
+    {
+        NB_I8 code[] = "5|3";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 7);  /* 0b0101 | 0b0011 = 0b0111 = 7 */
+    }
+    {
+        NB_I8 code[] = "8|4";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 12);  /* 0b1000 | 0b0100 = 0b1100 = 12 */
+    }
+
+    /* 論理演算子とビット演算子の優先順位 */
+    {
+        NB_I8 code[] = "1||1&&0";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 0);  /* (1||1)&&0 = 1&&0 = 0 (左から右に評価) */
+    }
+    {
+        NB_I8 code[] = "5|3&12";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        /* (5|3)&12 = 7&12 = 4 (左から右に評価) */
+        /* 0b0111 & 0b1100 = 0b0100 = 4 */
+        TEST(value == 4);
     }
 
     TEST_END();
@@ -366,11 +480,60 @@ static void test_calc_complex()
         TEST(value == 1);  /* 10>5 = true */
     }
     {
-        NB_I8 code[] = "A>5&B<10";
+        NB_I8 code[] = "A>5&&B<10";
         NB_SIZE pos = 0;
         NB_VALUE value = 0;
         TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
-        TEST(value == 1);  /* (10>5)&(5<10) = 1&1 = 1 */
+        TEST(value == 1);  /* (10>5)&&(5<10) = 1&&1 = 1 */
+    }
+    {
+        NB_I8 code[] = "A<B||B=5";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* (10<5)||(5=5) = 0||1 = 1 */
+    }
+    {
+        NB_I8 code[] = "A>=10&&B<=5";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* (10>=10)&&(5<=5) = 1&&1 = 1 */
+    }
+    {
+        NB_I8 code[] = "A<>B";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* 10<>5 = true (not equal) */
+    }
+    {
+        NB_I8 code[] = "(A+B)*2>25";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 1);  /* (10+5)*2>25 = 30>25 = true */
+    }
+    {
+        NB_I8 code[] = "A%3+B%2";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 2);  /* (10%3)+(5%2) = 1+1 = 2 */
+    }
+    {
+        NB_I8 code[] = "A&B";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 0);  /* 10&5 = 0b1010&0b0101 = 0b0000 = 0 */
+    }
+    {
+        NB_I8 code[] = "A|B";
+        NB_SIZE pos = 0;
+        NB_VALUE value = 0;
+        TEST(IS_SUCCESS(calc(code, sizeof(code), &pos, &value)));
+        TEST(value == 15);  /* 10|5 = 0b1010|0b0101 = 0b1111 = 15 */
     }
 
     TEST_END();

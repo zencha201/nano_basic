@@ -106,6 +106,86 @@ static void test_command_let()
         TEST(value == 110);
         TEST(num == 30);
     }
+    {
+        /* LET C 10%3 (剰余演算) */
+        NB_I8 code[] = "LET C 10%3";
+        NB_LINE_NUM num = 30;
+        NB_SIZE pos = 4;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        NB_VALUE value = 0;
+        
+        memory_code_set(30, code, sizeof(code) - 1);
+        memory_code_set(40, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_let(&num, code, sizeof(code), &pos, &state)));
+        TEST(IS_SUCCESS(memory_variable_get(2, &value)));  /* C = index 2 */
+        TEST(value == 1);  /* 10%3 = 1 */
+        TEST(num == 40);
+    }
+    {
+        /* LET D 5>3 (比較演算) */
+        NB_I8 code[] = "LET D 5>3";
+        NB_LINE_NUM num = 40;
+        NB_SIZE pos = 4;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        NB_VALUE value = 0;
+        
+        memory_code_set(40, code, sizeof(code) - 1);
+        memory_code_set(50, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_let(&num, code, sizeof(code), &pos, &state)));
+        TEST(IS_SUCCESS(memory_variable_get(3, &value)));  /* D = index 3 */
+        TEST(value == 1);  /* 5>3 = true = 1 */
+        TEST(num == 50);
+    }
+    {
+        /* LET E 1&&0 (論理AND) */
+        NB_I8 code[] = "LET E 1&&0";
+        NB_LINE_NUM num = 50;
+        NB_SIZE pos = 4;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        NB_VALUE value = 0;
+        
+        memory_code_set(50, code, sizeof(code) - 1);
+        memory_code_set(60, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_let(&num, code, sizeof(code), &pos, &state)));
+        TEST(IS_SUCCESS(memory_variable_get(4, &value)));  /* E = index 4 */
+        TEST(value == 0);  /* 1&&0 = false = 0 */
+        TEST(num == 60);
+    }
+    {
+        /* LET F 5|3 (ビットOR) */
+        NB_I8 code[] = "LET F 5|3";
+        NB_LINE_NUM num = 60;
+        NB_SIZE pos = 4;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        NB_VALUE value = 0;
+        
+        memory_code_set(60, code, sizeof(code) - 1);
+        memory_code_set(70, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_let(&num, code, sizeof(code), &pos, &state)));
+        TEST(IS_SUCCESS(memory_variable_get(5, &value)));  /* F = index 5 */
+        TEST(value == 7);  /* 5|3 = 0b0101|0b0011 = 0b0111 = 7 */
+        TEST(num == 70);
+    }
+    {
+        /* LET G 10<>5 (不等号) */
+        NB_I8 code[] = "LET G 10<>5";
+        NB_LINE_NUM num = 70;
+        NB_SIZE pos = 4;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        NB_VALUE value = 0;
+        
+        memory_code_set(70, code, sizeof(code) - 1);
+        memory_code_set(80, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_let(&num, code, sizeof(code), &pos, &state)));
+        TEST(IS_SUCCESS(memory_variable_get(6, &value)));  /* G = index 6 */
+        TEST(value == 1);  /* 10<>5 = true = 1 */
+        TEST(num == 80);
+    }
 
     TEST_END();
 }
@@ -195,6 +275,97 @@ static void test_command_if()
         
         TEST(IS_SUCCESS(command_if(&num, code, sizeof(code), &pos, &state)));
         TEST(num == 30);  /* 条件が真なので同じ行で継続 */
+    }
+    {
+        /* IF 5<>3 THEN ... (不等号) */
+        NB_I8 code[] = "IF 5<>3 PRINT \"NOT EQUAL\"";
+        NB_LINE_NUM num = 40;
+        NB_SIZE pos = 3;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        
+        memory_code_set(40, code, sizeof(code) - 1);
+        memory_code_set(50, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_if(&num, code, sizeof(code), &pos, &state)));
+        TEST(num == 40);  /* 5<>3 は真 */
+    }
+    {
+        /* IF 5<=5 THEN ... (以下) */
+        NB_I8 code[] = "IF 5<=5 PRINT \"LESS OR EQUAL\"";
+        NB_LINE_NUM num = 50;
+        NB_SIZE pos = 3;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        
+        memory_code_set(50, code, sizeof(code) - 1);
+        memory_code_set(60, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_if(&num, code, sizeof(code), &pos, &state)));
+        TEST(num == 50);  /* 5<=5 は真 */
+    }
+    {
+        /* IF 10>=5 THEN ... (以上) */
+        NB_I8 code[] = "IF 10>=5 PRINT \"GREATER OR EQUAL\"";
+        NB_LINE_NUM num = 60;
+        NB_SIZE pos = 3;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        
+        memory_code_set(60, code, sizeof(code) - 1);
+        memory_code_set(70, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_if(&num, code, sizeof(code), &pos, &state)));
+        TEST(num == 60);  /* 10>=5 は真 */
+    }
+    {
+        /* IF 1&&1 THEN ... (論理AND) */
+        NB_I8 code[] = "IF 1&&1 PRINT \"LOGICAL AND\"";
+        NB_LINE_NUM num = 70;
+        NB_SIZE pos = 3;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        
+        memory_code_set(70, code, sizeof(code) - 1);
+        memory_code_set(80, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_if(&num, code, sizeof(code), &pos, &state)));
+        TEST(num == 70);  /* 1&&1 は真 */
+    }
+    {
+        /* IF 0||1 THEN ... (論理OR) */
+        NB_I8 code[] = "IF 0||1 PRINT \"LOGICAL OR\"";
+        NB_LINE_NUM num = 80;
+        NB_SIZE pos = 3;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        
+        memory_code_set(80, code, sizeof(code) - 1);
+        memory_code_set(90, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_if(&num, code, sizeof(code), &pos, &state)));
+        TEST(num == 80);  /* 0||1 は真 */
+    }
+    {
+        /* IF 5&3 THEN ... (ビットAND) */
+        NB_I8 code[] = "IF 5&3 PRINT \"BIT AND\"";
+        NB_LINE_NUM num = 90;
+        NB_SIZE pos = 3;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        
+        memory_code_set(90, code, sizeof(code) - 1);
+        memory_code_set(100, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_if(&num, code, sizeof(code), &pos, &state)));
+        TEST(num == 90);  /* 5&3=1 は真 */
+    }
+    {
+        /* IF 10%3=1 THEN ... (剰余) */
+        NB_I8 code[] = "IF 10%3=1 PRINT \"MODULO\"";
+        NB_LINE_NUM num = 100;
+        NB_SIZE pos = 3;
+        NB_STATE state = NB_STATE_RUN_MODE;
+        
+        memory_code_set(100, code, sizeof(code) - 1);
+        memory_code_set(110, code, sizeof(code) - 1);
+        
+        TEST(IS_SUCCESS(command_if(&num, code, sizeof(code), &pos, &state)));
+        TEST(num == 100);  /* 10%3=1 は真 */
     }
 
     TEST_END();
