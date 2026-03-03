@@ -113,29 +113,36 @@ sa:
 # テスト実行ターゲット
 .PHONY: test test_all
 
+test: test_calc test_command test_interpreter
+
 test_all: test_memory test_util test_calc test_command test_interpreter
 
 test_memory:
 	@echo "=== Running Memory Tests ==="
-	@$(MAKE) TARGET_TYPE=memory_test clean all
+	@$(MAKE) TARGET_TYPE=memory_test clean
+	@$(MAKE) TARGET_TYPE=memory_test $(LIB) memory_test
 	@LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./memory_test
 
 test_util:
 	@echo "=== Running Util Tests ==="
-	@$(MAKE) TARGET_TYPE=util_test clean all
+	@$(MAKE) TARGET_TYPE=util_test clean
+	@$(MAKE) TARGET_TYPE=util_test $(LIB) util_test
 	@LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./util_test
 
 test_calc:
 	@echo "=== Running Calc Tests ==="
-	@$(MAKE) TARGET_TYPE=calc_test clean all
+	@$(MAKE) TARGET_TYPE=calc_test clean
+	@$(MAKE) TARGET_TYPE=calc_test $(LIB) calc_test
 	@LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./calc_test
 
 test_command:
 	@echo "=== Running Command Tests ==="
-	@$(MAKE) TARGET_TYPE=command_test clean all
+	@$(MAKE) TARGET_TYPE=command_test clean
+	@$(MAKE) TARGET_TYPE=command_test $(LIB) command_test
 	@LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./command_test
 
 test_interpreter:
 	@echo "=== Running Interpreter Tests ==="
-	@$(MAKE) TARGET_TYPE=interpreter_test clean all
+	@$(MAKE) TARGET_TYPE=interpreter_test clean
+	@$(MAKE) TARGET_TYPE=interpreter_test $(LIB) interpreter_test
 	@LD_LIBRARY_PATH=./lib:$$LD_LIBRARY_PATH ./interpreter_test
