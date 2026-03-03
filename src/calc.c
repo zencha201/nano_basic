@@ -159,10 +159,18 @@ static NB_RESULT calc_pri_3rd(const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_
             *pos = *pos + 1;
             IF_ERROR_EXIT(calc_pri_2d(code, size, pos, &value2));
             value1 = value1 == value2;
-        } else if(code[*pos] == '!') {
-            *pos = *pos + 1;
+        } else if(code[*pos] == '<' && code[(*pos) + 1] == '>') {
+            *pos = *pos + 2;
             IF_ERROR_EXIT(calc_pri_2d(code, size, pos, &value2));
             value1 = value1 != value2;
+        } else if(code[*pos] == '<' && code[(*pos) + 1] == '=') {
+            *pos = *pos + 2;
+            IF_ERROR_EXIT(calc_pri_2d(code, size, pos, &value2));
+            value1 = value1 <= value2;
+        } else if(code[*pos] == '>' && code[(*pos) + 1] == '=') {
+            *pos = *pos + 2;
+            IF_ERROR_EXIT(calc_pri_2d(code, size, pos, &value2));
+            value1 = value1 >= value2;
         } else if(code[*pos] == '<') {
             *pos = *pos + 1;
             IF_ERROR_EXIT(calc_pri_2d(code, size, pos, &value2));
@@ -186,14 +194,22 @@ static NB_RESULT calc_pri_4th(const NB_I8 *code, NB_SIZE size, NB_SIZE *pos, NB_
     IF_ERROR_EXIT(calc_pri_3rd(code, size, pos, &value1));
 
     while(1) {
-        if(code[*pos] == '&') {
-            *pos = *pos + 1;
+        if(code[*pos] == '&' && code[(*pos) + 1] == '&') {
+            *pos = *pos + 2;
             IF_ERROR_EXIT(calc_pri_3rd(code, size, pos, &value2));
             value1 = value1 && value2;
+        } else if(code[*pos] == '|' && code[(*pos) + 1] == '|') {
+            *pos = *pos + 2;
+            IF_ERROR_EXIT(calc_pri_3rd(code, size, pos, &value2));
+            value1 = value1 || value2;
+        } else if(code[*pos] == '&') {
+            *pos = *pos + 1;
+            IF_ERROR_EXIT(calc_pri_3rd(code, size, pos, &value2));
+            value1 = (NB_VALUE)((NB_U8)value1 & (NB_U8)value2);
         } else if(code[*pos] == '|') {
             *pos = *pos + 1;
             IF_ERROR_EXIT(calc_pri_3rd(code, size, pos, &value2));
-            value1 = value1 || value2;
+            value1 = (NB_VALUE)((NB_U8)value1 | (NB_U8)value2);
         } else {
             break;
         }
