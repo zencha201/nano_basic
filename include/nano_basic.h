@@ -27,11 +27,10 @@ typedef char NB_BOOL;
 #define NB_CODE_SEPALATE_PARAMETER (' ') /* メモリ内のコード上のパラメータ区切り */
 #define NB_CODE_STRING_SIGN ('\"') /* 文字列記号 */
 
-/* #define __DEBUG__ */
+#define TOSTRING(STR) #STR
 #ifdef __DEBUG__
 #include <stdio.h>
 #define LOG(...) fprintf(stderr, __VA_ARGS__)
-#define TOSTRING(STR) #STR
 #else /* __DEBUG__ */
 #define LOG(...)
 #endif /* __DEBUG__ */
